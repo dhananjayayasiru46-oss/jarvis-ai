@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JARVIS AI</title>
+<style>
+*{box-sizing:border-box}
+body{
+ margin:0;background:#050b18;color:#eaf6ff;
+ font-family:Arial,sans-serif;min-height:100vh;
+ display:flex;justify-content:center;
+}
+.app{width:100%;max-width:600px;padding:22px}
+header{text-align:center;padding:25px 0}
+h1{color:#39caff;letter-spacing:7px;
+ text-shadow:0 0 20px #009dff}
+.status{color:#62dfff;font-size:12px;letter-spacing:3px}
+.core{
+ width:155px;height:155px;border-radius:50%;
+ margin:25px auto;
+ border:2px solid #19bfff;
+ box-shadow:0 0 25px #008cff, inset 0 0 25px #008cff;
+ display:grid;place-items:center;
+ animation:pulse 2s infinite;
+}
+.core span{font-size:52px;color:#50dfff}
+@keyframes pulse{
+ 50%{box-shadow:0 0 45px #008cff,inset 0 0 40px #008cff}
+}
+.chat{
+ height:320px;overflow-y:auto;
+ background:#0a1527;border:1px solid #17466b;
+ border-radius:16px;padding:15px;
+}
+.msg{padding:12px;margin:10px 0;
+ border-radius:12px;line-height:1.5}
+.jarvis{background:#102a42;color:#8de5ff}
+.user{background:#173a5c;text-align:right}
+.controls{display:flex;gap:8px;margin-top:14px}
+input{
+ flex:1;min-width:0;background:#101e32;
+ color:white;border:1px solid #17618b;
+ border-radius:12px;padding:14px;font-size:15px
+}
+button{
+ background:#087ebc;color:white;border:0;
+ border-radius:12px;padding:13px;
+ font-size:17px;cursor:pointer
+}
+button:active{opacity:.7}
+.mic{margin-top:12px;width:100%;
+ background:#123451;border:1px solid #168bc5}
+footer{text-align:center;color:#54748f;
+ font-size:11px;margin-top:25px}
+</style>
+</head>
+<body>
+<div class="app">
+<header>
+ <h1>J.A.R.V.I.S.</h1>
+ <div class="status">PERSONAL AI SYSTEM</div>
+ <div class="core"><span>◉</span></div>
+ <div class="status" id="status">SYSTEM ONLINE</div>
+</header>
+
+<div class="chat" id="chat">
+ <div class="msg jarvis">
+  JARVIS: Good day! Your interface is ready.
+  My AI brain will be connected soon.
+ </div>
+</div>
+
+<div class="controls">
+ <input id="input" placeholder="Ask JARVIS something...">
+ <button onclick="send()">➤</button>
+</div>
+<button class="mic" onclick="listen()">🎙 Speak to JARVIS</button>
+
+<footer>JARVIS AI • PERSONAL ASSISTANT</footer>
+</div>
+
+<script>
+const chat=document.getElementById("chat");
+const input=document.getElementById("input");
+
+function addMessage(text,type){
+ const div=document.createElement("div");
+ div.className="msg "+type;
+ div.textContent=text;
+ chat.appendChild(div);
+ chat.scrollTop=chat.scrollHeight;
+}
+
+function send(){
+ const text=input.value.trim();
+ if(!text)return;
+ addMessage("YOU: "+text,"user");
+ input.value="";
+ addMessage("JARVIS: Interface test successful. My real AI connection is coming in the next step.","jarvis");
+}
+
+input.addEventListener("keydown",e=>{
+ if(e.key==="Enter")send();
+});
+
+function listen(){
+ const Speech=window.SpeechRecognition||
+ window.webkitSpeechRecognition;
+ if(!Speech){
+  document.getElementById("status").textContent=
+  "VOICE NOT SUPPORTED";
+  return;
+ }
+ const recognition=new Speech();
+ recognition.lang="en-US";
+ recognition.onstart=()=>{
+  document.getElementById("status").textContent="LISTENING...";
+ };
+ recognition.onresult=e=>{
+  input.value=e.results[0][0].transcript;
+  send();
+ };
+ recognition.onerror=()=>{
+  document.getElementById("status").textContent="VOICE ERROR";
+ };
+ recognition.onend=()=>{
+  document.getElementById("status").textContent="SYSTEM ONLINE";
+ };
+ recognition.start();
+}
+</script>
+</body>
+</html>
